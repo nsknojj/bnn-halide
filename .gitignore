@@ -1,3 +1,6 @@
+*.zip
+*.npz
+
 # Compiled Object files
 *.slo
 *.lo
