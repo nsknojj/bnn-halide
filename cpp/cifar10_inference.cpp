@@ -116,13 +116,13 @@ int main(int argc, char** argv) {
         out = norm8.get_output(out, args);
         out = dense3.get_output(out, args);
 
-        out.print_loop_nest();
+//        out.print_loop_nest();
         out.compile_to_file("compiled_network", args);
 
         int b_s = std::min(N-n, batch_size);
         Image<int16_t> output(10,b_s);
       
-//        out.realize(output);
+        out.realize(output);
         
 //        for(int l=0;l<10;l++){
 //        for(int c=0;c<1024;c++)
