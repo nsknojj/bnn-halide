@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-O2 -std=gnu++11 -g -I $(HALIDE_INC) -L $(HALIDE_BIN) -lHalide -lpthread -ldl
+CFLAGS=-g -O3 -std=gnu++11 -I $(HALIDE_INC) -L $(HALIDE_BIN) -lHalide -lpthread -ldl
 MINIZIP_LDFLAGS=-lminizip -laes -lz
 LDFLAGS=$(MINIZIP_LDFLAGS)
 
@@ -15,7 +15,7 @@ all: $(EXE)
 $(OBJ): %.o: %.cpp %.h
 	$(CC) -c $< -o $@ $(CFLAGS)
 
-%.o: %.cpp %.h
+%.o: %.cpp
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 # Rule for executables

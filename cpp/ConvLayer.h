@@ -5,56 +5,46 @@
 #include <cstddef>
 #include <SArray.h>
 #include <Timer.h>
+
+#include <iostream>
 using namespace Halide;
 
 template<int M, int N, int S, int K, int B_S>
 class ConvLayer{
 public:
-    SArray<float, M*N*K*K> w;
-    SArray<float, N> k;
-    SArray<float, N> h;
+    SArray<int16_t, M*N*K*K> w;
+    
     ConvLayer() {
         static_assert(K==3, "Conv layer only works for 3x3 convolutions!\n");
-        static_assert(M==128, "Input conv layer assumes 128 input channels!\n");
     }
-    
-    void get_output(Image<float> &input, Image<float> &output) {
-        Var d("d"), c("c"), x("x"), y("y");
-        
-        Image<float> kernel(Buffer(Float(32), K, K, M, N, (uint8_t*)w.ptr(), "kernel"));
 
-//        for (int channel=0;channel<3;channel++){
-//            for (int i=0;i<3;i++) {
-//                for (int j=0;j<3;j++)
-//                    printf("%.3f ", input(j,i,channel,0));
-//                printf("\n");
-//            }
-//            printf("\n");
-//        }
-//        
-//        for (int channel=0;channel<3;channel++){
-//            for (int i=0;i<3;i++) {
-//                for (int j=0;j<3;j++)
-//                    printf("%.1f ", kernel(j,i,channel,0));
-//                printf("\n");
-//            }
-//            printf("\n");
-//        }
+    Func get_output(const Func input, std::vector<Argument> &args) {
+        Var i("i"), j("j"), x("x"), y("y");
 
-        Func padded("padded"), res("res"), out("out");
-        padded = BoundaryConditions::constant_exterior(input, 0);
-        
+        ImageParam kernel(Int(16), 4);
+        kernel.set(Buffer(Int(16), K, K, M, N, (uint8_t*)w.ptr(), "kernel"));
+        args.push_back(kernel);
+
+        Func converted("converted"), padded("padded"), res("res"), out("out");
+
+        converted(x, y, j, i) = input(clamp(x, 0, S-1),clamp(y, 0, S-1),j,i);
+        padded(x, y, j, i) = select(x>=0&&x<S&&y>=0&&y<S, converted(x,y,j,i), 0);
+
         RDom r(0, K, 0, K, 0, M);
-        res(x, y, c, d) += kernel(r.x, r.y, r.z, c) * padded(x+1-r.x, y+1-r.y, r.z, d);
-        res.parallel(x);
-        res.update(0).parallel(y);
-        Timer t("timer");
-        res.print_loop_nest();
-        t.start();
-        output = res.realize(S, S, N, B_S);
-        t.stop();
+        res(x, y, j, i) += kernel(r.x, r.y, r.z, j) * padded(x+1-r.x, y+1-r.y, r.z, i);
+
+//        converted.compute_root();
+        padded.compute_root();
+
+        Var fused;
+        int vector_size=16;
+//        if (S<16) vector_size=4;
+        res.update(0).fuse(j,i,fused).vectorize(x,vector_size).parallel(fused)
+            .reorder(r.x,r.y,r.z,x,y,fused);
+        res.compute_root();
+        
+        return res;
     }
-    
     
 };
 

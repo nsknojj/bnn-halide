@@ -4,6 +4,7 @@
 #include <Halide.h>
 #include <cstddef>
 #include <SArray.h>
+
 using namespace Halide;
 
 template<int M, int N, int S, int K, int B_S>
@@ -17,44 +18,57 @@ public:
         static_assert(M==3, "Input conv layer assumes 3 input channels!\n");
     }
     
-    void get_output(Image<float> &input, Image<float> &output) {
-        Var d("d"), c("c"), x("x"), y("y");
+    Func get_output(ImageParam &input, std::vector<Argument> &args) {
+        Var i("i"), j("j"), x("x"), y("y");
         
-        Image<float> kernel(Buffer(Float(32), K, K, M, N, (uint8_t*)w.ptr(), "kernel"));
-        Image<float> kk(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)k.ptr(), "kk"));
-        Image<float> hh(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)h.ptr(), "hh"));
+        ImageParam kernel(Float(32), 4);
+        ImageParam kk(Float(32), 1);
+        ImageParam hh(Float(32), 1);
+        kernel.set(Buffer(Float(32), K, K, M, N, (uint8_t*)w.ptr(), "kernel"));
+        kk.set(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)k.ptr(), "kk"));
+        hh.set(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)h.ptr(), "hh"));
 
-
-        
-//        for (int channel=0;channel<3;channel++){
-//            for (int i=0;i<3;i++) {
-//                for (int j=0;j<3;j++)
-//                    printf("%.3f ", input(j,i,channel,0));
-//                printf("\n");
-//            }
-//            printf("\n");
-//        }
-//
-//        for (int channel=0;channel<3;channel++){
-//            for (int i=0;i<3;i++) {
-//                for (int j=0;j<3;j++)
-//                    printf("%.1f ", kernel(j,i,channel,0));
-//                printf("\n");
-//            }
-//            printf("\n");
-//        }
-   
+        args.push_back(kernel);
+        args.push_back(kk);
+        args.push_back(hh);   
    
         Func padded("padded"), res("res"), out("out");
-        padded = BoundaryConditions::constant_exterior(input, 0);
+        padded(x, y, j, i) = select(x>=0&&x<S&&y>=0&&y<S, input(clamp(x,0,S-1),clamp(y,0,S-1), j, i), 0.0f);
         
         RDom r(0, K, 0, K, 0, M);
-        res(x, y, c, d) += kernel(r.x, r.y, r.z, c) * padded(x+1-r.x, y+1-r.y, r.z, d);
-        //res.parallel(r.z);
-        out(x, y, c, d) = (select(res(x, y, c, d) * kk(c) + hh(c) < 0, -1.0f, 1.0f));
-        //out.parallel(x);
-        output = out.realize(S, S, N, B_S);
+        res(x, y, j, i) += kernel(r.x, r.y, r.z, j) * padded(x+1-r.x, y+1-r.y, r.z, i);
         
+        out(x, y, j, i) = cast<int16_t>(select(res(x, y, j, i) * kk(j) + hh(j) <= 0, (int16_t)-1, (int16_t)1));
+
+        padded.compute_root();
+
+        Var fused("fused");
+        res.update(0).fuse(j,i,fused).reorder(r.x,r.y,x,y,r.z,fused)
+            .parallel(fused).vectorize(x,16);
+
+        res.compute_root();
+            
+        return out; 
+    }
+    
+    void debug_print() {
+        //        for (int channel=0;channel<3;channel++){
+        //            for (int i=0;i<3;i++) {
+        //                for (int j=0;j<3;j++)
+        //                    printf("%.3f ", input(j,i,channel,0));
+        //                printf("\n");
+        //            }
+        //            printf("\n");
+        //        }
+        //
+        //        for (int channel=0;channel<3;channel++){
+        //            for (int i=0;i<3;i++) {
+        //                for (int j=0;j<3;j++)
+        //                    printf("%.1f ", kernel(j,i,channel,0));
+        //                printf("\n");
+        //            }
+        //            printf("\n");
+        //        }
     }
     
     
