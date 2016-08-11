@@ -49,6 +49,8 @@ Func img2line(Func input, int N, int S) {
 
 int main(int argc, char** argv) {
     
+    Timer t;
+
     Cifar10TestInputs X(N);
     Cifar10TestLabels Y(N);
     
@@ -89,41 +91,41 @@ int main(int argc, char** argv) {
     
     // test
     int n_errors = 0;
-
+    Func out("out");
+    ImageParam input(Float(32), 4);
     for (int n=0;n<N;n+=batch_size) {
         float* data = X.data + n*3*32*32;
-        ImageParam input(Float(32), 4);
         input.set(Buffer(Float(32), 32, 32, 3, batch_size, (uint8_t*)data, "input"));
-        // add input param to args
-        args.push_back(input);
-
-        Func out("out");
-        out = input_conv1.get_output(input, args);
-        out = conv2.get_output(out, args);
-        out = norm2.get_output(out, args);
-        out = conv3.get_output(out, args);
-        out = norm3.get_output(out, args);
-        out = conv4.get_output(out, args);
-        out = norm4.get_output(out, args);
-        out = conv5.get_output(out, args);
-        out = norm5.get_output(out, args);
-        out = conv6.get_output(out, args);
-        out = norm6.get_output(out, args);
-        out = img2line(out, 512, 4);
-        out = dense1.get_output(out, args);
-        out = norm7.get_output(out, args);
-        out = dense2.get_output(out, args);
-        out = norm8.get_output(out, args);
-        out = dense3.get_output(out, args);
-
-//        out.print_loop_nest();
-        out.compile_to_file("compiled_network", args);
 
         int b_s = std::min(N-n, batch_size);
         Image<int16_t> output(10,b_s);
-      
-        out.realize(output);
-        
+
+        if (n==0) {
+        // add input param to args
+            args.push_back(input);
+            out = input_conv1.get_output(input, args);
+            out = conv2.get_output(out, args);
+            out = norm2.get_output(out, args);
+            out = conv3.get_output(out, args);
+            out = norm3.get_output(out, args);
+            out = conv4.get_output(out, args);
+            out = norm4.get_output(out, args);
+            out = conv5.get_output(out, args);
+            out = norm5.get_output(out, args);
+            out = conv6.get_output(out, args);
+            out = norm6.get_output(out, args);
+            out = img2line(out, 512, 4);
+            out = dense1.get_output(out, args);
+            out = norm7.get_output(out, args);
+            out = dense2.get_output(out, args);
+            out = norm8.get_output(out, args);
+            out = dense3.get_output(out, args);
+
+            // out.print_loop_nest();
+            out.compile_to_file("compiled_network", args);
+            out.realize(output);
+        }
+
 //        for(int l=0;l<10;l++){
 //        for(int c=0;c<1024;c++)
 //        for(int i=0;i<4;i++) {
@@ -132,6 +134,9 @@ int main(int argc, char** argv) {
 //            printf("\n");
 //        }
 
+        t.start();
+        out.realize(output);
+
         for (int j = 0;j < b_s; j++) {
             int prediction = 11;
             float maxval = -1e20;
@@ -139,7 +144,6 @@ int main(int argc, char** argv) {
                 float k = params.float_data(25)[i];
                 float h = params.float_data(26)[i];
                 float val = output(i, j) * k + h;
-                //printf("%d ", output(i,j));
                 if (val > maxval) {
                     prediction = i;
                     maxval = val;
@@ -148,17 +152,14 @@ int main(int argc, char** argv) {
 
             int label = Y.data[n+j];
             n_errors += prediction!=label;
-
-            printf ("  Pred/Label:\t%2u/%2d\t[%s]\n", prediction, label,((prediction==label)?" OK ":"FAIL"));
+            // uncomment to print all prediction
+            //printf ("  Pred/Label:\t%2u/%2d\t[%s]\n", prediction, label,((prediction==label)?" OK ":"FAIL"));
         }
 
-                
-        Timer t;
-        t.start();
-        out.realize(output);
-        t.stop();
-
+        t.stop(); 
     }
     
     printf(" error rate = %d / %d\n", n_errors, N);
+    printf(" total time = %.4lfs\n", t.totalTime);
+    printf(" time per image = %.6lfs\n", t.totalTime / N);
 }
