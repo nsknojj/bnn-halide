@@ -22,13 +22,13 @@
 class Timer {
 
   #ifdef TIMER_ON
-
+    public:
+    
     char binName[50];
     unsigned nCalls;
     timeval ts_start;
     float totalTime;
     
-    public:
       //------------------------------------------------------------------
       // constructor
       //------------------------------------------------------------------

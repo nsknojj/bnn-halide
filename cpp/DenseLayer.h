@@ -4,6 +4,8 @@
 #include <Halide.h>
 #include <cstddef>
 #include <SArray.h>
+
+using namespace std;
   
 template<int M, int N, int B_S>
 class DenseLayer

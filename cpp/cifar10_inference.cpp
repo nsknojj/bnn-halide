@@ -13,8 +13,8 @@
 
 using namespace Halide;
 
-const auto batch_size = 100;
-const auto N = 1000;
+const auto batch_size = 10;
+const auto N = 100;
 
 std::vector<Argument> args;
 
@@ -124,6 +124,7 @@ int main(int argc, char** argv) {
             // out.print_loop_nest();
             out.compile_to_file("compiled_network", args);
             out.realize(output);
+            printf("Timer Start\n");
         }
 
 //        for(int l=0;l<10;l++){
@@ -144,6 +145,7 @@ int main(int argc, char** argv) {
                 float k = params.float_data(25)[i];
                 float h = params.float_data(26)[i];
                 float val = output(i, j) * k + h;
+                printf("%d ", output(i,j));
                 if (val > maxval) {
                     prediction = i;
                     maxval = val;
@@ -153,7 +155,7 @@ int main(int argc, char** argv) {
             int label = Y.data[n+j];
             n_errors += prediction!=label;
             // uncomment to print all prediction
-            //printf ("  Pred/Label:\t%2u/%2d\t[%s]\n", prediction, label,((prediction==label)?" OK ":"FAIL"));
+            printf ("  Pred/Label:\t%2u/%2d\t[%s]\n", prediction, label,((prediction==label)?" OK ":"FAIL"));
         }
 
         t.stop(); 
