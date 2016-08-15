@@ -13,7 +13,7 @@
 
 using namespace Halide;
 
-const auto batch_size = 10;
+const auto batch_size = 100;
 const auto N = 100;
 
 std::vector<Argument> args;
@@ -37,7 +37,6 @@ BatchNormLayer<1024,1,batch_size>       norm8;
 DenseLayer<1024,10,batch_size>          dense3;
 
 Func img2line(Func input, int N, int S) {
-//    const int S = 4;
     int stride = S*S;
     Var i("i"), x("x");
     Func out("out");
@@ -145,7 +144,7 @@ int main(int argc, char** argv) {
                 float k = params.float_data(25)[i];
                 float h = params.float_data(26)[i];
                 float val = output(i, j) * k + h;
-                printf("%d ", output(i,j));
+                //printf("%d ", output(i,j));
                 if (val > maxval) {
                     prediction = i;
                     maxval = val;

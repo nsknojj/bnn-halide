@@ -10,7 +10,7 @@
 #include "MaxNormLayer.h"
 #include "DenseLayer.h"
 
-const int batch_size = 10;
+const int batch_size = 100;
 const int N = 100;
 
 // layer definition

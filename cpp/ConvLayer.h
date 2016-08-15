@@ -38,7 +38,7 @@ public:
 
         Var fused;
         int vector_size=16;
-//        if (S<16) vector_size=4;
+        if (S<16) vector_size=S;
         res.update(0).fuse(j,i,fused).vectorize(x,vector_size).parallel(fused)
             .reorder(r.x,r.y,r.z,x,y,fused);
         res.compute_root();
