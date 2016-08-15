@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-g -std=gnu++11 -I $(HALIDE_INC) -L $(HALIDE_BIN) -lHalide -lpthread -ldl
+CFLAGS=-O3 -std=gnu++11 -I $(HALIDE_INC) -L $(HALIDE_BIN) -lHalide -lpthread -ldl
 MINIZIP_LDFLAGS=-lminizip -laes -lz
 LDFLAGS=$(MINIZIP_LDFLAGS)
 

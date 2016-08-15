@@ -13,8 +13,8 @@
 
 using namespace Halide;
 
-const auto batch_size = 100;
-const auto N = 100;
+const auto batch_size = 1000;
+const auto N = 1000;
 
 std::vector<Argument> args;
 

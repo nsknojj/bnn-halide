@@ -10,8 +10,8 @@
 #include "MaxNormLayer.h"
 #include "DenseLayer.h"
 
-const int batch_size = 100;
-const int N = 100;
+const int batch_size = 1000;
+const int N = 1000;
 
 // layer definition
 InputConvLayer<3,128,32,3,batch_size>   input_conv1;
@@ -128,7 +128,7 @@ int main(int argc, char** argv) {
     for (int n=0;n<N;n+=batch_size) {
         int b_s=std::min(batch_size, N-n);
         float* data = X.data + n*3*32*32;
-        short output[10][b_s];
+        short output[b_s][10];
         
         // set input, output buffer
         buffer_t input_buf={0}, output_buf={0};
@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
             &conv5_w, &norm5_k, &norm5_h,
             &conv6_w, &norm6_k, &norm6_h,
             &dense1_w, &norm7_k, &norm7_h,
-            &dense2_w, &norm8_k, &norm8_k,
+            &dense2_w, &norm8_k, &norm8_h,
             &dense3_w,
             &output_buf
         );
@@ -157,8 +157,8 @@ int main(int argc, char** argv) {
             for (int i = 0; i < 10; ++i) {
                 float k = params.float_data(25)[i];
                 float h = params.float_data(26)[i];
-                float val = output[i][j] * k + h;
-                printf("%d ", output[i][j]);
+                float val = output[j][i] * k + h;
+                //printf("%d ", output[j][i]);
                 if (val > maxval) {
                     prediction = i;
                     maxval = val;
@@ -172,12 +172,6 @@ int main(int argc, char** argv) {
         }
         
         t.stop();
-
-        // for(int i=0;i<32;i++) {
-        //     for(int j=0;j<32;j++)
-        //         printf("%d ", output(j,i,0,9));
-        //     printf("\n");
-        // }
     }
     
     printf(" error rate = %d / %d\n", n_errors, N);

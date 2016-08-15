@@ -30,7 +30,7 @@ struct halide_filter_metadata_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-int compiled_network(buffer_t *_input_buffer, buffer_t *_kernel_buffer, buffer_t *_kk_buffer, buffer_t *_hh_buffer, buffer_t *_kernel__2_buffer, buffer_t *_kk__2_buffer, buffer_t *_hh__2_buffer, buffer_t *_kernel__3_buffer, buffer_t *_kk__3_buffer, buffer_t *_hh__3_buffer, buffer_t *_kernel__4_buffer, buffer_t *_kk__4_buffer, buffer_t *_hh__4_buffer, buffer_t *_kernel__5_buffer, buffer_t *_kk__5_buffer, buffer_t *_hh__5_buffer, buffer_t *_kernel__6_buffer, buffer_t *_kk__6_buffer, buffer_t *_hh__6_buffer, buffer_t *_ww_buffer, buffer_t *_kk__7_buffer, buffer_t *_hh__7_buffer, buffer_t *_ww__2_buffer, buffer_t *_kk__8_buffer, buffer_t *_hh__8_buffer, buffer_t *_ww__3_buffer, buffer_t *_out__18_buffer) HALIDE_FUNCTION_ATTRS;
+int compiled_network(buffer_t *_p0_buffer, buffer_t *_p1_buffer, buffer_t *_p2_buffer, buffer_t *_p3_buffer, buffer_t *_p4_buffer, buffer_t *_p5_buffer, buffer_t *_p6_buffer, buffer_t *_p7_buffer, buffer_t *_p8_buffer, buffer_t *_p9_buffer, buffer_t *_p10_buffer, buffer_t *_p11_buffer, buffer_t *_p12_buffer, buffer_t *_p13_buffer, buffer_t *_p14_buffer, buffer_t *_p15_buffer, buffer_t *_p16_buffer, buffer_t *_p17_buffer, buffer_t *_p18_buffer, buffer_t *_p19_buffer, buffer_t *_p20_buffer, buffer_t *_p21_buffer, buffer_t *_p22_buffer, buffer_t *_p23_buffer, buffer_t *_p24_buffer, buffer_t *_p25_buffer, buffer_t *_out__18_buffer) HALIDE_FUNCTION_ATTRS;
 int compiled_network_argv(void **args) HALIDE_FUNCTION_ATTRS;
 extern const struct halide_filter_metadata_t compiled_network_metadata;
 #ifdef __cplusplus

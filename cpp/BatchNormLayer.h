@@ -43,8 +43,6 @@ public:
         else
             out(j,i) = cast<int16_t>(select(input(j,i) * kk(j) + hh(j) <= 0, (int16_t)-1, (int16_t)1));
         
-        //out.compute_root().parallel(j);
-
         return out;
     }
 };
