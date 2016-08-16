@@ -3,7 +3,8 @@
 
 #include <Halide.h>
 #include <cstddef>
-#include <SArray.h>
+#include "SArray.h"
+#include "Typedefs.h"
 
 using namespace Halide;
 
@@ -38,7 +39,7 @@ public:
         RDom r(0, K, 0, K, 0, M);
         res(x, y, j, i) += kernel(r.x, r.y, r.z, j) * padded(x+1-r.x, y+1-r.y, r.z, i);
         
-        out(x, y, j, i) = cast<int16_t>(select(res(x, y, j, i) * kk(j) + hh(j) <= 0, (int16_t)-1, (int16_t)1));
+        out(x, y, j, i) = cast<itype>(select(res(x, y, j, i) * kk(j) + hh(j) <= 0, -1, 1));
 
         padded.compute_root();
 

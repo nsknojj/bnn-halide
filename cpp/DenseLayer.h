@@ -3,7 +3,8 @@
 
 #include <Halide.h>
 #include <cstddef>
-#include <SArray.h>
+#include "SArray.h"
+#include "Typedefs.h"
 
 using namespace std;
   
@@ -31,7 +32,7 @@ public:
         RDom j(0,M,"j");
         Func out("out");
  
-        out(i, bs) += input(j, bs) * cast<int16_t>(select(ww(i, j)<=0, (int16_t)-1, (int16_t)1));
+        out(i, bs) += input(j, bs) * cast<itype>(select(ww(i, j)<=0, -1, 1));
 
         //Var x_outer, x_inner, w_outer, w_inner;
         //out.update().tile(x, w, x_outer, w_outer, x_inner, w_inner, 64, 16);

@@ -10,11 +10,12 @@
 #include "MaxNormLayer.h"
 #include "BatchNormLayer.h"
 #include "DenseLayer.h"
+#include "Typedefs.h"
 
 using namespace Halide;
 
-const auto batch_size = 1000;
-const auto N = 1000;
+const auto batch_size = 100;
+const auto N = 100;
 
 std::vector<Argument> args;
 
@@ -97,7 +98,7 @@ int main(int argc, char** argv) {
         input.set(Buffer(Float(32), 32, 32, 3, batch_size, (uint8_t*)data, "input"));
 
         int b_s = std::min(N-n, batch_size);
-        Image<int16_t> output(10,b_s);
+        Image<itype> output(10,b_s);
 
         if (n==0) {
         // add input param to args

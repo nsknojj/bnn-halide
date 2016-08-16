@@ -3,7 +3,8 @@
 
 #include <Halide.h>
 #include <cstddef>
-#include <SArray.h>
+#include "SArray.h"
+#include "Typedefs.h"
 
 using namespace Halide;
   
@@ -39,9 +40,9 @@ public:
         Func out("out");
        
         if (S>1)
-            out(x,y,j,i) = cast<int16_t>(select(input(x,y,j,i) * kk(j) + hh(j) <= 0, (int16_t)-1, (int16_t)1));
+            out(x,y,j,i) = cast<itype>(select(input(x,y,j,i) * kk(j) + hh(j) <= 0, -1, 1));
         else
-            out(j,i) = cast<int16_t>(select(input(j,i) * kk(j) + hh(j) <= 0, (int16_t)-1, (int16_t)1));
+            out(j,i) = cast<itype>(select(input(j,i) * kk(j) + hh(j) <= 0, -1, 1));
         
         return out;
     }

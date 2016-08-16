@@ -3,8 +3,8 @@
 
 #include <Halide.h>
 #include <cstddef>
-#include <SArray.h>
-#include <Timer.h>
+#include "SArray.h"
+#include "Typedefs.h" 
 
 #include <iostream>
 using namespace Halide;

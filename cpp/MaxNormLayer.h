@@ -3,7 +3,8 @@
 
 #include <Halide.h>
 #include <cstddef>
-#include <SArray.h>
+#include "SArray.h"
+#include "Typedefs.h"
 
 using namespace Halide;
   
@@ -47,7 +48,7 @@ public:
         
         pooled(x,y,j,i) = maximum(input(pool_size*x + r.x, pool_size*y + r.y, j, i));
         
-        out(x,y,j,i) = cast<int16_t>(select(pooled(x,y,j,i) * kk(j) + hh(j) <= 0, (int16_t)-1, (int16_t)1));
+        out(x,y,j,i) = cast<itype>(select(pooled(x,y,j,i) * kk(j) + hh(j) <= 0, -1, 1));
     
         pooled.compute_root();
         
