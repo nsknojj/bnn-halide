@@ -55,72 +55,72 @@ int main(int argc, char** argv) {
     Timer t;
 
     // deliver params to each layer
-    input_conv1.w.binarize_from(params.float_data(0));
-    input_conv1.k.copy_from(params.float_data(1));
-    input_conv1.h.copy_from(params.float_data(2));
-    conv2.w.binarize_from(params.float_data(3));
-    norm2.k.copy_from(params.float_data(4));
-    norm2.h.copy_from(params.float_data(5));
-    conv3.w.binarize_from(params.float_data(6));
-    norm3.k.copy_from(params.float_data(7));
-    norm3.h.copy_from(params.float_data(8));
-    conv4.w.binarize_from(params.float_data(9));
-    norm4.k.copy_from(params.float_data(10));
-    norm4.h.copy_from(params.float_data(11));
-    conv5.w.binarize_from(params.float_data(12));
-    norm5.k.copy_from(params.float_data(13));
-    norm5.h.copy_from(params.float_data(14));
-    conv6.w.binarize_from(params.float_data(15));
-    norm6.k.copy_from(params.float_data(16));
-    norm6.h.copy_from(params.float_data(17));
+    input_conv1.w->binarize_from(params.float_data(0));
+    input_conv1.k->copy_from(params.float_data(1));
+    input_conv1.h->copy_from(params.float_data(2));
+    conv2.w->binarize_from(params.float_data(3));
+    norm2.k->copy_from(params.float_data(4));
+    norm2.h->copy_from(params.float_data(5));
+    conv3.w->binarize_from(params.float_data(6));
+    norm3.k->copy_from(params.float_data(7));
+    norm3.h->copy_from(params.float_data(8));
+    conv4.w->binarize_from(params.float_data(9));
+    norm4.k->copy_from(params.float_data(10));
+    norm4.h->copy_from(params.float_data(11));
+    conv5.w->binarize_from(params.float_data(12));
+    norm5.k->copy_from(params.float_data(13));
+    norm5.h->copy_from(params.float_data(14));
+    conv6.w->binarize_from(params.float_data(15));
+    norm6.k->copy_from(params.float_data(16));
+    norm6.h->copy_from(params.float_data(17));
     dense1.w = params.float_data(18);
-    norm7.k.copy_from(params.float_data(19));
-    norm7.h.copy_from(params.float_data(20));
+    norm7.k->copy_from(params.float_data(19));
+    norm7.h->copy_from(params.float_data(20));
     dense2.w = params.float_data(21);
-    norm8.k.copy_from(params.float_data(22));
-    norm8.h.copy_from(params.float_data(23));
+    norm8.k->copy_from(params.float_data(22));
+    norm8.h->copy_from(params.float_data(23));
     dense3.w = params.float_data(24);
     
     // set inputConvLayer1 buffer
     buffer_t input_conv1_w={0}, input_conv1_k={0}, input_conv1_h={0};
-    set_buf(input_conv1_w, (uint8_t*)input_conv1.w.ptr(), 3, 3, 3, 128, sizeof(float));
-    set_buf(input_conv1_k, (uint8_t*)input_conv1.k.ptr(), 128, 0, 0, 0, sizeof(float));
-    set_buf(input_conv1_h, (uint8_t*)input_conv1.h.ptr(), 128, 0, 0, 0, sizeof(float));
+    set_buf(input_conv1_w, (uint8_t*)input_conv1.w->ptr(), 3, 3, 3, 128, sizeof(float));
+    set_buf(input_conv1_k, (uint8_t*)input_conv1.k->ptr(), 128, 0, 0, 0, sizeof(float));
+    set_buf(input_conv1_h, (uint8_t*)input_conv1.h->ptr(), 128, 0, 0, 0, sizeof(float));
     // set ConvLayer2 buffer
     buffer_t conv2_w={0}, norm2_k={0}, norm2_h={0};
-    set_buf(conv2_w, (uint8_t*)conv2.w.ptr(), 3, 3, 128, 128, sizeof(int16_t));
-    set_buf(norm2_k, (uint8_t*)norm2.k.ptr(), 128, 0, 0, 0, sizeof(float));
-    set_buf(norm2_h, (uint8_t*)norm2.h.ptr(), 128, 0, 0, 0, sizeof(float));
+    set_buf(conv2_w, (uint8_t*)conv2.w->ptr(), 3, 3, 128, 128, sizeof(int16_t));
+    set_buf(norm2_k, (uint8_t*)norm2.k->ptr(), 128, 0, 0, 0, sizeof(float));
+    set_buf(norm2_h, (uint8_t*)norm2.h->ptr(), 128, 0, 0, 0, sizeof(float));
     // ConvLayer3
     buffer_t conv3_w={0}, norm3_k={0}, norm3_h={0};
-    set_buf(conv3_w, (uint8_t*)conv3.w.ptr(), 3, 3, 128, 256, sizeof(int16_t));
-    set_buf(norm3_k, (uint8_t*)norm3.k.ptr(), 256, 0, 0, 0, sizeof(float));
-    set_buf(norm3_h, (uint8_t*)norm3.h.ptr(), 256, 0, 0, 0, sizeof(float));
+    set_buf(conv3_w, (uint8_t*)conv3.w->ptr(), 3, 3, 128, 256, sizeof(int16_t));
+    set_buf(norm3_k, (uint8_t*)norm3.k->ptr(), 256, 0, 0, 0, sizeof(float));
+    set_buf(norm3_h, (uint8_t*)norm3.h->ptr(), 256, 0, 0, 0, sizeof(float));
     // ConvLayer4
     buffer_t conv4_w={0}, norm4_k={0}, norm4_h={0};
-    set_buf(conv4_w, (uint8_t*)conv4.w.ptr(), 3, 3, 256, 256, sizeof(int16_t));
-    set_buf(norm4_k, (uint8_t*)norm4.k.ptr(), 256, 0, 0, 0, sizeof(float));
-    set_buf(norm4_h, (uint8_t*)norm4.h.ptr(), 256, 0, 0, 0, sizeof(float));        
+    set_buf(conv4_w, (uint8_t*)conv4.w->ptr(), 3, 3, 256, 256, sizeof(int16_t));
+    set_buf(norm4_k, (uint8_t*)norm4.k->ptr(), 256, 0, 0, 0, sizeof(float));
+    set_buf(norm4_h, (uint8_t*)norm4.h->ptr(), 256, 0, 0, 0, sizeof(float));        
     // ConvLayer5
     buffer_t conv5_w={0}, norm5_k={0}, norm5_h={0};
-    set_buf(conv5_w, (uint8_t*)conv5.w.ptr(), 3, 3, 256, 512, sizeof(int16_t));
-    set_buf(norm5_k, (uint8_t*)norm5.k.ptr(), 512, 0, 0, 0, sizeof(float));
-    set_buf(norm5_h, (uint8_t*)norm5.h.ptr(), 512, 0, 0, 0, sizeof(float));
+    set_buf(conv5_w, (uint8_t*)conv5.w->ptr(), 3, 3, 256, 512, sizeof(int16_t));
+    set_buf(norm5_k, (uint8_t*)norm5.k->ptr(), 512, 0, 0, 0, sizeof(float));
+    set_buf(norm5_h, (uint8_t*)norm5.h->ptr(), 512, 0, 0, 0, sizeof(float));
     // ConvLayer6
     buffer_t conv6_w={0}, norm6_k={0}, norm6_h={0};
-    set_buf(conv6_w, (uint8_t*)conv6.w.ptr(), 3, 3, 512, 512, sizeof(int16_t));
-    set_buf(norm6_k, (uint8_t*)norm6.k.ptr(), 512, 0, 0, 0, sizeof(float));
-    set_buf(norm6_h, (uint8_t*)norm6.h.ptr(), 512, 0, 0, 0, sizeof(float));
+    set_buf(conv6_w, (uint8_t*)conv6.w->ptr(), 3, 3, 512, 512, sizeof(int16_t));
+    set_buf(norm6_k, (uint8_t*)norm6.k->ptr(), 512, 0, 0, 0, sizeof(float));
+    set_buf(norm6_h, (uint8_t*)norm6.h->ptr(), 512, 0, 0, 0, sizeof(float));
     // Dense1
     buffer_t dense1_w={0}, norm7_k={0}, norm7_h={0};
     set_buf(dense1_w, (uint8_t*)dense1.w, 1024, 512*4*4, 0, 0, sizeof(float));
-    set_buf(norm7_k, (uint8_t*)norm7.k.ptr(), 1024, 0, 0, 0, sizeof(float));
-    set_buf(norm7_h, (uint8_t*)norm7.h.ptr(), 1024, 0, 0, 0, sizeof(float));
+    set_buf(norm7_k, (uint8_t*)norm7.k->ptr(), 1024, 0, 0, 0, sizeof(float));
+    set_buf(norm7_h, (uint8_t*)norm7.h->ptr(), 1024, 0, 0, 0, sizeof(float));
     // Dense2        
     buffer_t dense2_w={0}, norm8_k={0}, norm8_h={0};
     set_buf(dense2_w, (uint8_t*)dense2.w, 1024, 1024, 0, 0, sizeof(float));
-    set_buf(norm8_k, (uint8_t*)norm8.k.ptr(), 1024, 0, 0, 0, sizeof(float));
-    set_buf(norm8_h, (uint8_t*)norm8.h.ptr(), 1024, 0, 0, 0, sizeof(float));
+    set_buf(norm8_k, (uint8_t*)norm8.k->ptr(), 1024, 0, 0, 0, sizeof(float));
+    set_buf(norm8_h, (uint8_t*)norm8.h->ptr(), 1024, 0, 0, 0, sizeof(float));
     // Dense3
     buffer_t dense3_w={0};
     set_buf(dense3_w, (uint8_t*)dense3.w, 10, 1024, 0, 0, sizeof(float));

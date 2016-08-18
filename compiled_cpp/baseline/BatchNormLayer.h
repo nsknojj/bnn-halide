@@ -12,14 +12,22 @@ class BatchNormLayer
 {
 public:
 
-    SArray<float, N> k;
-    SArray<float, N> h;
+    SArray<float, N> *k;
+    SArray<float, N> *h;
 
     //--------------------------------------------------
     // Constructor
     //--------------------------------------------------
     BatchNormLayer()
     {
+	k = new SArray<float, N>;
+	h = new SArray<float, N>;
+    }
+
+    ~BatchNormLayer()
+    {
+	delete k;
+	delete h;
     }
 };
 

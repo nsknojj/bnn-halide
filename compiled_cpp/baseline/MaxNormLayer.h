@@ -17,8 +17,8 @@ class MaxNormLayer
 
 public:
 
-    SArray<float, N> k;
-    SArray<float, N> h;
+    SArray<float, N> *k;
+    SArray<float, N> *h;
 
     //--------------------------------------------------
     // Constructor
@@ -26,6 +26,14 @@ public:
     MaxNormLayer()
     {
         static_assert(S%2 == 0, "Max2Layer: S must be a multiple of 2\n");
+	k = new SArray<float, N>;
+	h = new SArray<float, N>;
+    }
+
+    ~MaxNormLayer()
+    {
+	delete k;
+	delete h;
     }
 
 };
