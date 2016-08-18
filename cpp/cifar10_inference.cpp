@@ -57,36 +57,36 @@ int main(int argc, char** argv) {
     Params params(get_root_dir() + params_file);
    
     // deliver params to each layer
-    input_conv1.w.binarize_from(params.float_data(0));
-    input_conv1.k.copy_from(params.float_data(1));
-    input_conv1.h.copy_from(params.float_data(2));
+    input_conv1.w->binarize_from(params.float_data(0));
+    input_conv1.k->copy_from(params.float_data(1));
+    input_conv1.h->copy_from(params.float_data(2));
     
-    conv2.w.binarize_from(params.float_data(3));
-    norm2.k.copy_from(params.float_data(4));
-    norm2.h.copy_from(params.float_data(5));
+    conv2.w->binarize_from(params.float_data(3));
+    norm2.k->copy_from(params.float_data(4));
+    norm2.h->copy_from(params.float_data(5));
     
-    conv3.w.binarize_from(params.float_data(6));
-    norm3.k.copy_from(params.float_data(7));
-    norm3.h.copy_from(params.float_data(8));
+    conv3.w->binarize_from(params.float_data(6));
+    norm3.k->copy_from(params.float_data(7));
+    norm3.h->copy_from(params.float_data(8));
     
-    conv4.w.binarize_from(params.float_data(9));
-    norm4.k.copy_from(params.float_data(10));
-    norm4.h.copy_from(params.float_data(11));
+    conv4.w->binarize_from(params.float_data(9));
+    norm4.k->copy_from(params.float_data(10));
+    norm4.h->copy_from(params.float_data(11));
     
-    conv5.w.binarize_from(params.float_data(12));
-    norm5.k.copy_from(params.float_data(13));
-    norm5.h.copy_from(params.float_data(14));
+    conv5.w->binarize_from(params.float_data(12));
+    norm5.k->copy_from(params.float_data(13));
+    norm5.h->copy_from(params.float_data(14));
     
-    conv6.w.binarize_from(params.float_data(15));
-    norm6.k.copy_from(params.float_data(16));
-    norm6.h.copy_from(params.float_data(17));
+    conv6.w->binarize_from(params.float_data(15));
+    norm6.k->copy_from(params.float_data(16));
+    norm6.h->copy_from(params.float_data(17));
     
     dense1.w = params.float_data(18);
-    norm7.k.copy_from(params.float_data(19));
-    norm7.h.copy_from(params.float_data(20));
+    norm7.k->copy_from(params.float_data(19));
+    norm7.h->copy_from(params.float_data(20));
     dense2.w = params.float_data(21);
-    norm8.k.copy_from(params.float_data(22));
-    norm8.h.copy_from(params.float_data(23));
+    norm8.k->copy_from(params.float_data(22));
+    norm8.h->copy_from(params.float_data(23));
     dense3.w = params.float_data(24);
     
     // test

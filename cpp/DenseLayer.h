@@ -38,7 +38,9 @@ public:
         //out.update().tile(x, w, x_outer, w_outer, x_inner, w_inner, 64, 16);
 
         out.update().parallel(i);
+#ifdef SCHEDULE        
         if (N>=16&&N%16==0) out.update().vectorize(i,16);
+#endif
         out.compute_root();
         
         return out;

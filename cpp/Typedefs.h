@@ -2,6 +2,7 @@
 #define TYPEDEFS_H
 
 //#define USE_FLOAT
+#define SCHEDULE
 
 #ifdef USE_FLOAT
 

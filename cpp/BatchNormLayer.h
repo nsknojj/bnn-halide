@@ -17,21 +17,29 @@ class BatchNormLayer
 {
 public:
 
-    SArray<float, N> k;
-    SArray<float, N> h;
+    SArray<float, N> *k;
+    SArray<float, N> *h;
 
     //--------------------------------------------------
     // Constructor
     //--------------------------------------------------
     BatchNormLayer()
     {
+        k = new SArray<float, N>;
+        h = new SArray<float, N>;
+    }
+
+    ~BatchNormLayer()
+    {
+        delete k;
+        delete h;
     }
 
     Func get_output(Func input, std::vector<Argument> &args) {
         ImageParam kk(Float(32), 1);
         ImageParam hh(Float(32), 1);
-        kk.set(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)k.ptr(), "kk"));
-        hh.set(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)h.ptr(), "hh"));
+        kk.set(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)k->ptr(), "kk"));
+        hh.set(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)h->ptr(), "hh"));
         
         args.push_back(kk);
         args.push_back(hh);

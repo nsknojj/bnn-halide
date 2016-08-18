@@ -11,12 +11,22 @@ using namespace Halide;
 template<int M, int N, int S, int K, int B_S>
 class InputConvLayer{
 public:
-    SArray<float, M*N*K*K> w;
-    SArray<float, N> k;
-    SArray<float, N> h;
+    SArray<float, M*N*K*K> *w;
+    SArray<float, N> *k;
+    SArray<float, N> *h;
+
     InputConvLayer() {
         static_assert(K==3, "Conv layer only works for 3x3 convolutions!\n");
         static_assert(M==3, "Input conv layer assumes 3 input channels!\n");
+        w = new SArray<float, M*N*K*K>;
+        k = new SArray<float, N>;
+        h = new SArray<float, N>;
+    }
+
+    ~InputConvLayer() {
+        delete w;
+        delete k;
+        delete h;
     }
     
     Func get_output(ImageParam &input, std::vector<Argument> &args) {
@@ -25,9 +35,9 @@ public:
         ImageParam kernel(Float(32), 4);
         ImageParam kk(Float(32), 1);
         ImageParam hh(Float(32), 1);
-        kernel.set(Buffer(Float(32), K, K, M, N, (uint8_t*)w.ptr(), "kernel"));
-        kk.set(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)k.ptr(), "kk"));
-        hh.set(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)h.ptr(), "hh"));
+        kernel.set(Buffer(Float(32), K, K, M, N, (uint8_t*)w->ptr(), "kernel"));
+        kk.set(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)k->ptr(), "kk"));
+        hh.set(Buffer(Float(32), N, 0, 0, 0, (uint8_t*)h->ptr(), "hh"));
 
         args.push_back(kernel);
         args.push_back(kk);
@@ -42,11 +52,11 @@ public:
         out(x, y, j, i) = cast<itype>(select(res(x, y, j, i) * kk(j) + hh(j) <= 0, -1, 1));
 
         padded.compute_root();
-
+#ifdef SCHEDULE
         Var fused("fused");
         res.update(0).fuse(j,i,fused).reorder(r.x,r.y,x,y,r.z,fused)
             .parallel(fused).vectorize(x,16);
-
+#endif
         res.compute_root();
             
         return out; 
