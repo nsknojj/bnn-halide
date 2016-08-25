@@ -131,14 +131,6 @@ int main(int argc, char** argv) {
             printf("Timer Start\n");
         }
 
-//        for(int l=0;l<10;l++){
-//        for(int c=0;c<1024;c++)
-//        for(int i=0;i<4;i++) {
-//            for(int j=0;j<4;j++)
-//                printf("%d ", output(c,l));
-//            printf("\n");
-//        }
-
         t.start();
         out.realize(output);
 
