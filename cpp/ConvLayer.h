@@ -23,30 +23,41 @@ public:
         delete w;
     }
 
-    Func get_output(const Func input, std::vector<Argument> &args) {
+    Func get_output(Func input, std::vector<Argument> &args) {
         Var i("i"), j("j"), x("x"), y("y");
 
-        ImageParam kernel(Int(16), 4);
-        kernel.set(Buffer(Int(16), K, K, M, N, (uint8_t*)w->ptr(), "kernel"));
-        args.push_back(kernel);
+        ImageParam kernel_param(Int(16), 4);
+        kernel_param.set(Buffer(Int(16), K, K, M, N, (uint8_t*)w->ptr(), "kernel"));
+        args.push_back(kernel_param);
 
-        Func converted("converted"), padded("padded"), res("res"), out("out");
+		Func kernel;
+		kernel = BoundaryConditions::repeat_image(kernel_param);
+		kernel.compute_root();
 
-        converted(x, y, j, i) = input(clamp(x, 0, S-1),clamp(y, 0, S-1),j,i);
-        padded(x, y, j, i) = select(x>=0&&x<S&&y>=0&&y<S, converted(x,y,j,i), 0);
+        Func padded("padded"), res("res"), out("out");
+
+        padded(x, y, j, i) = select(x>=0&&x<S&&y>=0&&y<S, input(clamp(x, 0, S-1),clamp(y, 0, S-1),j,i), 0);
 
         RDom r(0, K, 0, K, 0, M);
         res(x, y, j, i) += kernel(r.x, r.y, r.z, j) * padded(x+1-r.x, y+1-r.y, r.z, i);
 
 //        converted.compute_root();
         padded.compute_root();
-#ifdef SCHEDULE
+#ifdef CPU_SCHEDULE
         Var fused;
         int vector_size=16;
         if (S<16) vector_size=S;
         res.update(0).fuse(j,i,fused).vectorize(x,vector_size).parallel(fused)
             .reorder(r.x,r.y,r.z,x,y,fused);
 #endif
+
+#ifdef GPU_SCHEDULE
+        Var fused;
+        int vector_size=16;
+        if (S<16) vector_size=S;
+        res.update(0).fuse(j,i,fused).gpu_tile(x,y,fused,4,4,16);
+#endif
+
         res.compute_root();
         
         return res;

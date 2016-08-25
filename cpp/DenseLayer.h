@@ -23,10 +23,14 @@ public:
     }
     
     Func get_output(Func input, std::vector<Argument> &args) {
-        ImageParam ww(Float(32), 2);
-        ww.set(Buffer(Float(32), N, M, 0, 0, (uint8_t*)w, "kk"));
+        ImageParam w_param(Float(32), 2);
+        w_param.set(Buffer(Float(32), N, M, 0, 0, (uint8_t*)w, "kk"));
 
-        args.push_back(ww);
+        args.push_back(w_param);
+
+		Func ww;
+		ww = BoundaryConditions::repeat_image(w_param);
+		ww.compute_root();
 
         Var i("i"), bs("bs");
         RDom j(0,M,"j");
@@ -34,12 +38,14 @@ public:
  
         out(i, bs) += input(j, bs) * cast<itype>(select(ww(i, j)<=0, -1, 1));
 
-        //Var x_outer, x_inner, w_outer, w_inner;
-        //out.update().tile(x, w, x_outer, w_outer, x_inner, w_inner, 64, 16);
-
         out.update().parallel(i);
-#ifdef SCHEDULE        
+#ifdef CPU_SCHEDULE        
         if (N>=16&&N%16==0) out.update().vectorize(i,16);
+#endif
+
+#ifdef GPU_SCHEDULE
+		if (N>=16&&N%16==0) 
+			out.gpu_tile(i,bs,1024,1);
 #endif
         out.compute_root();
         

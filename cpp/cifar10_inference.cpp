@@ -14,8 +14,8 @@
 
 using namespace Halide;
 
-const auto batch_size = 100;
-const auto N = 100;
+const auto batch_size = 1000;
+const auto N = 1000;
 
 std::vector<Argument> args;
 
@@ -121,9 +121,13 @@ int main(int argc, char** argv) {
             out = norm8.get_output(out, args);
             out = dense3.get_output(out, args);
 
+			Target target = get_host_target();
+#ifdef GPU_SCHEDULE
+			target.set_feature(Target::CUDA);
+#endif
             // out.print_loop_nest();
-            out.compile_to_file("compiled_network", args);
-            out.realize(output);
+            //out.compile_to_file("compiled_network", args);
+            out.compile_jit(target);
             printf("Timer Start\n");
         }
 

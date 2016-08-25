@@ -2,7 +2,10 @@
 #define TYPEDEFS_H
 
 //#define USE_FLOAT
-#define SCHEDULE
+
+#define GPU_SCHEDULE
+
+//#define CPU_SCHEDULE
 
 #ifdef USE_FLOAT
 
